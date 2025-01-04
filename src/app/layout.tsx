@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Organization, WithContext } from "schema-dts";
 
 const interSans = Inter({
   subsets: ["latin"],
@@ -76,6 +77,15 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+const organization: WithContext<Organization> = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "WikiOasis",
+  url: "https://wikioasis.org",
+  logo: "https://wikioasis.org/WikiOasis.webp",
+  alternateName: "Team WikiOasis",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -83,7 +93,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${interSans.className} antialiased`}>{children}</body>
+      <body className={`${interSans.className} antialiased`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organization) }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

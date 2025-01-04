@@ -9,6 +9,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { JSX, memo } from "react";
+import { FAQPage, WithContext } from "schema-dts";
 
 const linkClasses =
   "text-blue-400 hover:underline transition-colors duration-200 ease-in-out hover:text-blue-500 visited:text-purple-400 hover:visited:text-purple-500";
@@ -103,7 +104,7 @@ const features = [
       </>
     ),
   },
-];
+] as const;
 
 const faq = [
   {
@@ -123,6 +124,7 @@ const faq = [
         for more information.
       </>
     ),
+    textContent: "Yes, you can! Contact us in our Discord server or Phorge for more information.",
   },
   {
     title: "Is it possible to create a private wiki?",
@@ -131,9 +133,23 @@ const faq = [
   },
 ] as const;
 
+const faqSchema: WithContext<FAQPage> = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faq.map((x) => ({
+    "@type": "Question",
+    name: x.title,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: typeof x.content === "string" ? x.content : x.textContent,
+    },
+  })),
+};
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <nav className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="text-xl font-bold">WikiOasis</div>
