@@ -1,0 +1,4 @@
+User-Agent: *
+Disallow: /cdn-cgi/
+
+Sitemap: https://wikioasis.org/sitemap.xml
