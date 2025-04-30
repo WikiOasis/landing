@@ -9,7 +9,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { JSX, memo } from "react";
-import { FAQPage, WithContext } from "schema-dts";
+import { FAQPage, WithContext, WebSite } from "schema-dts";
 
 const linkClasses =
   "text-blue-400 hover:underline transition-colors duration-200 ease-in-out hover:text-blue-500 visited:text-purple-400 hover:visited:text-purple-500";
@@ -93,10 +93,7 @@ const features = [
     description: (
       <>
         You can always contact us on our{" "}
-        <ExternalLink href={discordLink}>
-          Discord
-        </ExternalLink>
-        ,{" "}
+        <ExternalLink href={discordLink}>Discord</ExternalLink>,{" "}
         <InternalLink href="https://phorge.wikioasis.org">Phorge</InternalLink>,
         or{" "}
         <InternalLink href="https://meta.wikioasis.org">Meta-Wiki</InternalLink>
@@ -116,20 +113,17 @@ const faq = [
     content: (
       <>
         Yes, you can! Contact us in our{" "}
-        <ExternalLink href={discordLink}>
-          Discord server
-        </ExternalLink>{" "}
-        or{" "}
+        <ExternalLink href={discordLink}>Discord server</ExternalLink> or{" "}
         <InternalLink href="https://phorge.wikioasis.org">Phorge</InternalLink>{" "}
         for more information.
       </>
     ),
-    textContent: "Yes, you can! Contact us in our Discord server or Phorge for more information.",
+    textContent:
+      "Yes, you can! Contact us in our Discord server or Phorge for more information.",
   },
   {
     title: "Is it possible to create a private wiki?",
-    content:
-      "Of course! Just check the 'Private' box when requesting a wiki.",
+    content: "Of course! Just check the 'Private' box when requesting a wiki.",
   },
 ] as const;
 
@@ -146,16 +140,31 @@ const faqSchema: WithContext<FAQPage> = {
   })),
 };
 
+const webSiteSchema: WithContext<WebSite> = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "WikiOasis",
+  alternateName: ["WO", "WikiOasis Wiki Host"],
+  url: "https://wikioasis.org",
+};
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-white">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify([faqSchema, webSiteSchema]) }}
+      />
       <nav className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="text-xl font-bold">WikiOasis</div>
           <div className="hidden md:flex space-x-8">
-            <InternalLink href="https://meta.wikioasis.org">Meta-Wiki</InternalLink>
-            <InternalLink href="https://phorge.wikioasis.org">Phorge</InternalLink>
+            <InternalLink href="https://meta.wikioasis.org">
+              Meta-Wiki
+            </InternalLink>
+            <InternalLink href="https://phorge.wikioasis.org">
+              Phorge
+            </InternalLink>
             <ExternalLink href={discordLink}>Discord</ExternalLink>
           </div>
         </div>
@@ -224,19 +233,21 @@ export default function Home() {
       <footer className="bg-slate-900 text-center py-8">
         <div className="container mx-auto">
           <p className="text-slate-300" suppressHydrationWarning>
-            &copy; 2024-{new Date().getFullYear()} WikiOasis. All rights reserved.
+            &copy; 2024-{new Date().getFullYear()} WikiOasis. All rights
+            reserved.
           </p>
-          <p className="mt-2 text-slate-400">
-            Made with ❤️ by WikiOasis
-          </p>
+          <p className="mt-2 text-slate-400">Made with ❤️ by WikiOasis</p>
         </div>
         <div className="container mx-auto">
           <p className="mt-2 text-slate-400">
-            <InternalLink href="https://meta.wikioasis.org">Meta-Wiki</InternalLink>{" "}
+            <InternalLink href="https://meta.wikioasis.org">
+              Meta-Wiki
+            </InternalLink>{" "}
             -{" "}
-            <InternalLink href="https://phorge.wikioasis.org">Phorge</InternalLink>{" "}
-            -{" "}
-            <ExternalLink href="">Discord</ExternalLink>
+            <InternalLink href="https://phorge.wikioasis.org">
+              Phorge
+            </InternalLink>{" "}
+            - <ExternalLink href="">Discord</ExternalLink>
           </p>
         </div>
       </footer>
