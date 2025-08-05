@@ -247,7 +247,7 @@ export default function Home() {
             <InternalLink href="https://phorge.wikioasis.org">
               Phorge
             </InternalLink>{" "}
-            - <ExternalLink href="">Discord</ExternalLink>
+            - <ExternalLink href="https://discord.gg/Hc249nXbak">Discord</ExternalLink>
           </p>
         </div>
       </footer>
