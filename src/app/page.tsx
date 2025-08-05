@@ -14,7 +14,7 @@ import { FAQPage, WithContext, WebSite } from "schema-dts";
 const linkClasses =
   "text-blue-400 hover:underline transition-colors duration-200 ease-in-out hover:text-blue-500 visited:text-purple-400 hover:visited:text-purple-500";
 
-const discordLink = "https://discord.com/Hc249nXbak";
+const discordLink = "https://discord.gg/Hc249nXbak";
 
 const InternalLink = memo(function InternalLink({
   href,
