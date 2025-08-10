@@ -182,7 +182,7 @@ export default function Home() {
       <main className="container mx-auto px-6 pt-24 pb-16">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-extrabold inline-flex flex-col gap-2 pb-2">
-            <span>Write about...</span>
+            <span>Write about</span>
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400 pb-2">
               <Typewriter
                 words={typewriterWords}
