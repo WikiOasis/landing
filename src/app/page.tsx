@@ -1,3 +1,4 @@
+'use client';
 import Accordion from "@/components/Accordion";
 import {
   ArrowRight,
@@ -10,6 +11,7 @@ import {
 } from "lucide-react";
 import { JSX, memo } from "react";
 import { FAQPage, WithContext, WebSite } from "schema-dts";
+import { Typewriter } from 'react-simple-typewriter';
 
 const linkClasses =
   "text-blue-400 hover:underline transition-colors duration-200 ease-in-out hover:text-blue-500 visited:text-purple-400 hover:visited:text-purple-500";
@@ -55,6 +57,13 @@ const RequestWikiButton = memo(function RequestWikiButton() {
     </a>
   );
 });
+
+const typewriterWords = [
+  '...your favorite game',
+  '...that new TV show you\'re watching',
+  '...your new coding project',
+  '...anything',
+];
 
 const features = [
   {
@@ -172,10 +181,18 @@ export default function Home() {
 
       <main className="container mx-auto px-6 pt-24 pb-16">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold inline-flex flex-col gap-2">
-            <span>Create Your Own</span>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
-              Professional Wiki Space
+          <h1 className="text-4xl md:text-6xl font-extrabold inline-flex flex-col gap-2 pb-2">
+            <span>Write about...</span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400 pb-2">
+              <Typewriter
+                words={typewriterWords}
+                loop={0}
+                cursor
+                cursorStyle="|"
+                typeSpeed={60}
+                deleteSpeed={40}
+                delaySpeed={1500}
+              />
             </span>
           </h1>
           <p className="mt-6 text-xl text-slate-300">
