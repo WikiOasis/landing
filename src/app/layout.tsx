@@ -73,7 +73,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0093d4",
+  themeColor: "#141414",
   initialScale: 1,
 };
 
@@ -93,7 +93,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${interSans.className} antialiased`}>
+      <body className={`${interSans.className} antialiased bg-bg text-text`}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organization) }}
