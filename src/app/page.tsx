@@ -309,16 +309,18 @@ export default function Home() {
         <div className="mt-16">
           <div className="max-w-md mx-auto grid grid-cols-2 gap-4">
             <div className="p-6 rounded-xl surface shadow-soft surface-hover text-center">
-              <div className="text-sm text-muted">Users</div>
+              <div className="text-sm text-muted">Trusted by</div>
               <div className="mt-2 text-5xl font-semibold tabular-nums">
                 {stats ? displayUsers.toLocaleString() : "—"}
               </div>
+              <div className="text-sm text-muted">users</div>
             </div>
             <div className="p-6 rounded-xl surface shadow-soft surface-hover text-center">
-              <div className="text-sm text-muted">Wikis</div>
+              <div className="text-sm text-muted">Home to</div>
               <div className="mt-2 text-5xl font-semibold tabular-nums">
                 {wikis != null ? displayWikis.toLocaleString() : "—"}
               </div>
+              <div className="text-sm text-muted">wikis</div>
             </div>
           </div>
           {(statsError || wikisError) && (
