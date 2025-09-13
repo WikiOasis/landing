@@ -9,12 +9,12 @@ import {
   Users2,
   Wrench,
 } from "lucide-react";
-import { JSX, memo } from "react";
+import { JSX, memo, useEffect, useState } from "react";
 import { FAQPage, WithContext, WebSite } from "schema-dts";
 import { Typewriter } from 'react-simple-typewriter';
 
 const linkClasses =
-  "text-blue-400 hover:underline transition-colors duration-200 ease-in-out hover:text-blue-500 visited:text-purple-400 hover:visited:text-purple-500";
+  "text-accent link-underline transition-colors duration-200 ease-in-out hover:opacity-90";
 
 const discordLink = "https://discord.gg/Hc249nXbak";
 
@@ -50,7 +50,7 @@ const RequestWikiButton = memo(function RequestWikiButton() {
     <a
       role="button"
       href="https://meta.wikioasis.org/wiki/Special:RequestWiki"
-      className="px-8 py-3 bg-blue-600 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+      className="px-8 py-3 bg-accent text-white rounded-lg font-medium transition-all hover:brightness-110 hover:-translate-y-0.5 focus:focus-ring hover-outline-dark flex items-center justify-center gap-2"
     >
       Request a wiki
       <ArrowRight size={20} />
@@ -158,8 +158,102 @@ const webSiteSchema: WithContext<WebSite> = {
 };
 
 export default function Home() {
+  const [stats, setStats] = useState<{
+    users?: number;
+  } | null>(null);
+  const [statsError, setStatsError] = useState<string | null>(null);
+  const [displayUsers, setDisplayUsers] = useState<number>(0);
+  const [wikis, setWikis] = useState<number | null>(null);
+  const [displayWikis, setDisplayWikis] = useState<number>(0);
+  const [wikisError, setWikisError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadStats() {
+      try {
+        const url =
+          "https://meta.wikioasis.org/api.php?action=query&meta=siteinfo&siprop=statistics&format=json&origin=*";
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const s = data?.query?.statistics;
+        if (isMounted && s) {
+          setStats({ users: s.users });
+        }
+      } catch (err: unknown) {
+        if (isMounted) setStatsError("Failed to load stats");
+      }
+    }
+    loadStats();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!stats?.users) return;
+    let frame: number;
+    const start = performance.now();
+    const to = stats.users;
+    const from = displayUsers || 0;
+    const distance = Math.max(0, to - from);
+    const duration = Math.min(1800, Math.max(900, distance * 0.8));
+    const easeOutExpo = (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
+    const tick = (now: number) => {
+      const elapsed = Math.min(1, (now - start) / duration);
+      const value = Math.floor(from + (to - from) * easeOutExpo(elapsed));
+      setDisplayUsers(value);
+      if (elapsed < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [stats?.users]);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchWikis() {
+      try {
+        const url =
+          "https://meta.wikioasis.org/api.php?action=parse&format=json&prop=text&contentmodel=wikitext&text=%7B%7BNUMBEROFWIKIS%7D%7D&origin=*";
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const html: string | undefined = data?.parse?.text?.["*"];
+        if (!html) throw new Error("Empty response");
+        const text = html.replace(/<[^>]+>/g, "").trim();
+        const num = parseInt(text.replace(/[,\s]/g, ""), 10);
+        if (isMounted && Number.isFinite(num)) setWikis(num);
+      } catch (e) {
+        if (isMounted) setWikisError("Failed to load wikis count");
+      }
+    }
+    fetchWikis();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (wikis == null) return;
+    let frame: number;
+    const start = performance.now();
+    const to = wikis;
+    const from = displayWikis || 0;
+    const distance = Math.max(0, to - from);
+    const duration = Math.min(1800, Math.max(900, distance * 0.8));
+    const easeOutExpo = (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
+    const tick = (now: number) => {
+      const elapsed = Math.min(1, (now - start) / duration);
+      const value = Math.floor(from + (to - from) * easeOutExpo(elapsed));
+      setDisplayWikis(value);
+      if (elapsed < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [wikis]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-white">
+    <div className="min-h-screen bg-bg text-text">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify([faqSchema, webSiteSchema]) }}
@@ -181,9 +275,9 @@ export default function Home() {
 
       <main className="container mx-auto px-6 pt-24 pb-16">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold inline-flex flex-col gap-2 pb-2">
+          <h1 className="text-4xl md:text-6xl font-semibold inline-flex flex-col gap-2 pb-2 animate-[fadeInUp_700ms_ease-out]">
             <span>Write about</span>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400 pb-2">
+            <span className="glow-accent pb-2 bg-gradient-to-r from-[#4DA3FF] to-accent bg-clip-text text-transparent">
               <Typewriter
                 words={typewriterWords}
                 loop={0}
@@ -195,7 +289,7 @@ export default function Home() {
               />
             </span>
           </h1>
-          <p className="mt-6 text-xl text-slate-300">
+          <p className="mt-6 text-xl text-muted">
             The easy way to create free, customizable wikis. Start your wiki
             with our staff today.
           </p>
@@ -204,24 +298,47 @@ export default function Home() {
             <a
               role="button"
               href="https://meta.wikioasis.org/wiki/Special:UserLogin"
-              className="px-8 py-3 bg-slate-700 rounded-lg font-medium hover:bg-slate-600 transition-colors"
+              className="px-8 py-3 bg-bg2 border border-line rounded-lg font-medium transition-all hover:brightness-110 hover:-translate-y-0.5 focus:focus-ring hover-outline-dark"
             >
               Log in
             </a>
           </div>
         </div>
 
+        {/* Live counters */}
+        <div className="mt-16">
+          <div className="max-w-md mx-auto grid grid-cols-2 gap-4">
+            <div className="p-6 rounded-xl surface shadow-soft surface-hover text-center">
+              <div className="text-sm text-muted">Trusted by</div>
+              <div className="mt-2 text-5xl font-semibold tabular-nums">
+                {stats ? displayUsers.toLocaleString() : "—"}
+              </div>
+              <div className="text-sm text-muted">users</div>
+            </div>
+            <div className="p-6 rounded-xl surface shadow-soft surface-hover text-center">
+              <div className="text-sm text-muted">Home to</div>
+              <div className="mt-2 text-5xl font-semibold tabular-nums">
+                {wikis != null ? displayWikis.toLocaleString() : "—"}
+              </div>
+              <div className="text-sm text-muted">wikis</div>
+            </div>
+          </div>
+          {(statsError || wikisError) && (
+            <p className="mt-4 text-center text-muted text-sm">{statsError || wikisError}</p>
+          )}
+        </div>
+
         <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8">
           {features.map((x, i) => (
             <section
               key={i}
-              className="p-6 rounded-xl bg-slate-800/50 backdrop-blur border border-slate-700 shadow-lg"
+              className="p-6 rounded-xl surface shadow-soft surface-hover"
             >
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-emerald-500 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-emerald-500 flex items-center justify-center animate-[float_6s_ease-in-out_infinite]">
                 {x.icon}
               </div>
               <h2 className="mt-4 text-xl font-semibold">{x.title}</h2>
-              <p className="mt-2 text-slate-400">{x.description}</p>
+              <p className="mt-2 text-muted">{x.description}</p>
             </section>
           ))}
         </div>
@@ -239,7 +356,7 @@ export default function Home() {
           <h2 className="text-2xl md:text-4xl font-medium">
             Ready to get started?
           </h2>
-          <p className="mt-4 text-slate-300">
+          <p className="mt-4 text-muted">
             Start your wiki journey with us.
           </p>
           <div className="mt-4 items-center flex flex-col justify-center">
@@ -247,16 +364,16 @@ export default function Home() {
           </div>
         </div>
       </main>
-      <footer className="bg-slate-900 text-center py-8">
+      <footer className="bg-bg text-center py-8 border-t border-line">
         <div className="container mx-auto">
-          <p className="text-slate-300" suppressHydrationWarning>
+          <p className="text-muted" suppressHydrationWarning>
             &copy; 2024-{new Date().getFullYear()} WikiOasis. All rights
             reserved.
           </p>
-          <p className="mt-2 text-slate-400">Made with ❤️ by WikiOasis</p>
+          <p className="mt-2 text-muted">Made with ❤️ by WikiOasis</p>
         </div>
         <div className="container mx-auto">
-          <p className="mt-2 text-slate-400">
+          <p className="mt-2 text-muted">
             <InternalLink href="https://meta.wikioasis.org">
               Meta-Wiki
             </InternalLink>{" "}
