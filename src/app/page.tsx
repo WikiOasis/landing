@@ -60,7 +60,7 @@ const RequestWikiButton = memo(function RequestWikiButton() {
 
 const typewriterWords = [
   '...your favorite game',
-  '...that new TV show you\'re watching',
+  '...your book series',
   '...your new coding project',
   '...anything',
 ];
@@ -68,45 +68,46 @@ const typewriterWords = [
 const features = [
   {
     icon: <HandCoins />,
-    title: "Completely Free",
+    title: "Free, forever",
     description:
-      "Our services are completely free! No hidden fees or charges, ever. (Donations are appreciated!)",
+      "Our services are free, and will remain free. There are no hidden fees or charges, ever (although we appreciate donations).",
   },
   {
     icon: <MegaphoneOff />,
-    title: "No Ads",
+    title: "Ad-free",
     description:
-      "We don't like ads, and we're sure you don't either. That's why we don't have any on our platform.",
+      "We never show adverts, so your content can shine through the way you intended it to.",
   },
   {
     icon: <Wrench />,
-    title: "Customizable",
+    title: "Customizable, and then some",
     description:
-      "You have full control over your wiki's configuration. Change the theme, add extensions, and more!",
+      "Almost all settings on your wiki are customisable, change the theme, add extensions, and more!",
   },
   {
     icon: <Users2 />,
-    title: "Community-Driven",
+    title: "Community focused",
     description:
-      "Our platform is powered by the community. We're always looking for ways to improve our services.",
+      "We are powered by the community. We're always listening to your feedback and improving our platform.",
   },
   {
     icon: <Hammer />,
-    title: "Countering Vandalism",
+    title: "Vandalism, no biggie",
     description:
-      "Vandalism on your wiki? Leave it to us. We take care of the cleanup and prevention work.",
+      "We actively monitor your wiki using a mix of automated and human review to ensure vandalism is quickly cleaned up.",
   },
   {
     icon: <Headset />,
     title: "Support",
     description: (
       <>
-        You can always contact us on our{" "}
+        Stuck? We'll help you, reach out to us on {" "}
         <ExternalLink href={discordLink}>Discord</ExternalLink>,{" "}
         <InternalLink href="https://phorge.wikioasis.org">Phorge</InternalLink>,
-        or{" "}
-        <InternalLink href="https://meta.wikioasis.org">Meta-Wiki</InternalLink>
-        ! We are always here to help.
+        <InternalLink href="https://meta.wikioasis.org"> Meta </InternalLink>
+        or {" "}
+        <InternalLink href="mailto:stewards@wikioasis.org">email us</InternalLink>
+        ! We're always happy to help.
       </>
     ),
   },
@@ -114,25 +115,34 @@ const features = [
 
 const faq = [
   {
-    title: "How many hours does it take for a wiki to be reviewed?",
-    content: "It usually takes 1-12 hours for a wiki to be reviewed.",
+    title: "How many hours does it take for my wiki to be created?",
+    content: "We aim to review all requests within 24 hours, although most are reviewed within a few hours.",
   },
   {
     title: "Can I move here from another wiki host?",
     content: (
       <>
-        Yes, you can! Contact us in our{" "}
-        <ExternalLink href={discordLink}>Discord server</ExternalLink> or{" "}
+        Yes, you can! Contact us through our{" "}
+        <ExternalLink href={discordLink}>Discord server</ExternalLink> or on{" "}
         <InternalLink href="https://phorge.wikioasis.org">Phorge</InternalLink>{" "}
-        for more information.
+        for more information and help from our team.
       </>
     ),
     textContent:
-      "Yes, you can! Contact us in our Discord server or Phorge for more information.",
+      "Yes, you can! Contact us through our Discord server or Phorge for more information and help from our team.",
   },
   {
     title: "Is it possible to create a private wiki?",
-    content: "Of course! Just check the 'Private' box when requesting a wiki.",
+    content: "Of course! Just check the 'Private' box when requesting your wiki.",
+  },
+  {
+    title: "Can I use my own domain name?",
+    content: ( <>
+      Yes, you can! After creating your wiki, visit{" "}
+      <InternalLink href="https://meta.wikioasis.org/wiki/Special:RequestSSL">Special:RequestSSL</InternalLink>{" "}
+      to submit a request for your custom domain to be setup by our team, remember to point a CNAME record to yourwiki.wikioasis.org.
+    </>
+    ),
   },
 ] as const;
 
@@ -160,11 +170,13 @@ const webSiteSchema: WithContext<WebSite> = {
 export default function Home() {
   const [stats, setStats] = useState<{
     users?: number;
+    activeusers?: number;
   } | null>(null);
   const [statsError, setStatsError] = useState<string | null>(null);
   const [displayUsers, setDisplayUsers] = useState<number>(0);
   const [wikis, setWikis] = useState<number | null>(null);
   const [displayWikis, setDisplayWikis] = useState<number>(0);
+  const [displayActiveUsers, setDisplayActiveUsers] = useState<number>(0);
   const [wikisError, setWikisError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -178,7 +190,7 @@ export default function Home() {
         const data = await res.json();
         const s = data?.query?.statistics;
         if (isMounted && s) {
-          setStats({ users: s.users });
+          setStats({ users: s.users, activeusers: s.activeusers });
         }
       } catch (err: unknown) {
         if (isMounted) setStatsError("Failed to load stats");
@@ -208,6 +220,25 @@ export default function Home() {
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
   }, [stats?.users]);
+
+  useEffect(() => {
+    if (!stats?.activeusers) return;
+    let frame: number;
+    const start = performance.now();
+    const to = stats.activeusers;
+    const from = displayActiveUsers || 0;
+    const distance = Math.max(0, to - from);
+    const duration = Math.min(1800, Math.max(900, distance * 0.8));
+    const easeOutExpo = (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
+    const tick = (now: number) => {
+      const elapsed = Math.min(1, (now - start) / duration);
+      const value = Math.floor(from + (to - from) * easeOutExpo(elapsed));
+      setDisplayActiveUsers(value);
+      if (elapsed < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [stats?.activeusers]);
 
   useEffect(() => {
     let isMounted = true;
@@ -277,7 +308,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-semibold inline-flex flex-col gap-2 pb-2 animate-[fadeInUp_700ms_ease-out]">
             <span>Write about</span>
-            <span className="glow-accent pb-2 bg-gradient-to-r from-[#4DA3FF] to-accent bg-clip-text text-transparent">
+            <span className="glow-accent pb-2 bg-gradient-to-r from-[#A1B3FF] to-accent bg-clip-text text-transparent">
               <Typewriter
                 words={typewriterWords}
                 loop={0}
@@ -290,8 +321,7 @@ export default function Home() {
             </span>
           </h1>
           <p className="mt-6 text-xl text-muted">
-            The easy way to create free, customizable wikis. Start your wiki
-            with our staff today.
+            Create a customizable wiki, with no adverts, for free. Start writing with us today.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
             <RequestWikiButton />
@@ -307,13 +337,20 @@ export default function Home() {
 
         {/* Live counters */}
         <div className="mt-16">
-          <div className="max-w-md mx-auto grid grid-cols-2 gap-4">
+          <div className="max-w-4xl mx-auto grid grid-cols-3 gap-4">
             <div className="p-6 rounded-xl surface shadow-soft surface-hover text-center">
               <div className="text-sm text-muted">Trusted by</div>
               <div className="mt-2 text-5xl font-semibold tabular-nums">
                 {stats ? displayUsers.toLocaleString() : "—"}
               </div>
               <div className="text-sm text-muted">users</div>
+            </div>
+            <div className="p-6 rounded-xl surface shadow-soft surface-hover text-center">
+              <div className="text-sm text-muted">Made possible by</div>
+              <div className="mt-2 text-5xl font-semibold tabular-nums">
+                {stats ? displayActiveUsers.toLocaleString() : "—"}
+              </div>
+              <div className="text-sm text-muted">active editors</div>
             </div>
             <div className="p-6 rounded-xl surface shadow-soft surface-hover text-center">
               <div className="text-sm text-muted">Home to</div>
@@ -334,7 +371,7 @@ export default function Home() {
               key={i}
               className="p-6 rounded-xl surface shadow-soft surface-hover"
             >
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-emerald-500 flex items-center justify-center animate-[float_6s_ease-in-out_infinite]">
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#A1B3FF] to-blue-600 flex items-center justify-center animate-[float_6s_ease-in-out_infinite]">
                 {x.icon}
               </div>
               <h2 className="mt-4 text-xl font-semibold">{x.title}</h2>
