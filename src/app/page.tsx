@@ -88,7 +88,7 @@ const features = [
     icon: <Users2 />,
     title: "Community focused",
     description:
-      "We are powered by the community. We're always listening to your feedback and improving our platform.",
+      "We are powered by the community. We&apos;re always listening to your feedback and improving our platform.",
   },
   {
     icon: <Hammer />,
@@ -101,13 +101,13 @@ const features = [
     title: "Support",
     description: (
       <>
-        Stuck? We'll help you, reach out to us on {" "}
+        Stuck? We&apos;ll help you, reach out to us on {" "}
         <ExternalLink href={discordLink}>Discord</ExternalLink>,{" "}
         <InternalLink href="https://phorge.wikioasis.org">Phorge</InternalLink>,
         <InternalLink href="https://meta.wikioasis.org"> Meta </InternalLink>
         or {" "}
         <InternalLink href="mailto:stewards@wikioasis.org">email us</InternalLink>
-        ! We're always happy to help.
+        ! We&apos;re always happy to help.
       </>
     ),
   },
@@ -133,7 +133,7 @@ const faq = [
   },
   {
     title: "Is it possible to create a private wiki?",
-    content: "Of course! Just check the 'Private' box when requesting your wiki.",
+    content: "Of course! Just check the &apos;Private&apos; box when requesting your wiki.",
   },
   {
     title: "Can I use my own domain name?",
@@ -143,20 +143,31 @@ const faq = [
       to submit a request for your custom domain to be setup by our team, remember to point a CNAME record to yourwiki.wikioasis.org.
     </>
     ),
+    textContent: "Yes, you can! After creating your wiki, visit Special:RequestSSL to submit a request for your custom domain to be setup by our team, remember to point a CNAME record to yourwiki.wikioasis.org.",
   },
 ] as const;
 
 const faqSchema: WithContext<FAQPage> = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: faq.map((x) => ({
-    "@type": "Question",
-    name: x.title,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: typeof x.content === "string" ? x.content : x.textContent,
-    },
-  })),
+  mainEntity: faq.map((x) => {
+    const answerText =
+      typeof x.content === "string"
+        ? x.content
+        : "textContent" in x
+        ? // when content is JSX we prefer an explicit textContent field if provided
+          (x as typeof x & { textContent: string }).textContent ?? ""
+        : "";
+
+    return {
+      "@type": "Question",
+      name: x.title,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: answerText,
+      },
+    };
+  }),
 };
 
 const webSiteSchema: WithContext<WebSite> = {
@@ -192,7 +203,7 @@ export default function Home() {
         if (isMounted && s) {
           setStats({ users: s.users, activeusers: s.activeusers });
         }
-      } catch (err: unknown) {
+      } catch {
         if (isMounted) setStatsError("Failed to load stats");
       }
     }
@@ -203,7 +214,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (!stats?.users) return;
+    if (!stats?.users || displayUsers === stats.users) return;
     let frame: number;
     const start = performance.now();
     const to = stats.users;
@@ -219,10 +230,10 @@ export default function Home() {
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [stats?.users]);
+  }, [stats?.users, displayUsers]);
 
   useEffect(() => {
-    if (!stats?.activeusers) return;
+    if (!stats?.activeusers || displayActiveUsers === stats.activeusers) return;
     let frame: number;
     const start = performance.now();
     const to = stats.activeusers;
@@ -238,7 +249,7 @@ export default function Home() {
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [stats?.activeusers]);
+  }, [stats?.activeusers, displayActiveUsers]);
 
   useEffect(() => {
     let isMounted = true;
@@ -254,7 +265,7 @@ export default function Home() {
         const text = html.replace(/<[^>]+>/g, "").trim();
         const num = parseInt(text.replace(/[,\s]/g, ""), 10);
         if (isMounted && Number.isFinite(num)) setWikis(num);
-      } catch (e) {
+      } catch {
         if (isMounted) setWikisError("Failed to load wikis count");
       }
     }
@@ -265,7 +276,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (wikis == null) return;
+    if (wikis == null || displayWikis === wikis) return;
     let frame: number;
     const start = performance.now();
     const to = wikis;
@@ -281,7 +292,7 @@ export default function Home() {
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [wikis]);
+  }, [wikis, displayWikis]);
 
   return (
     <div className="min-h-screen bg-bg text-text">
