@@ -101,7 +101,7 @@ const features = [
     title: "Support",
     description: (
       <>
-        Stuck? We'll help you, reach out to us on {" "}
+        Stuck? We&apos;ll help you, reach out to us on {" "}
         <ExternalLink href={discordLink}>Discord</ExternalLink>,{" "}
         <InternalLink href="https://phorge.wikioasis.org">Phorge</InternalLink>,
         <InternalLink href="https://meta.wikioasis.org"> Meta </InternalLink>
