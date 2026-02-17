@@ -299,7 +299,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#1a1f2e] text-white relative overflow-hidden">
-
+      <script src="https://api.dashboard.instatus.com/widget?host=status.wikioasis.org&code=3a58baa4&locale=en">
+</script>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify([faqSchema, webSiteSchema]) }}
