@@ -88,28 +88,4 @@
   100% { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes blobFade {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.6; }
-}
-
-@keyframes blobFloat {
-  0%, 100% {
-    transform: translate(-50%, -50%) translateY(0) scale(1);
-  }
-  33% {
-    transform: translate(-50%, -50%) translateY(-30px) scale(1.05);
-  }
-  66% {
-    transform: translate(-50%, -50%) translateY(15px) scale(0.95);
-  }
-}
-
-.blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  pointer-events: none;
-  mix-blend-mode: screen;
-}
 

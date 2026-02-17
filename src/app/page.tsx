@@ -188,61 +188,10 @@ export default function Home() {
   const [wikis, setWikis] = useState<number | null>(null);
   const [displayWikis, setDisplayWikis] = useState<number>(0);
   const [displayActiveUsers, setDisplayActiveUsers] = useState<number>(0);
+  // ...existing code...
   const [wikisError, setWikisError] = useState<string | null>(null);
 
-  // Generate animated blobs on mount
-  useEffect(() => {
-    const colors = [
-      'rgba(64, 224, 208, 0.15)',
-      'rgba(46, 139, 87, 0.12)',
-      'rgba(0, 150, 136, 0.15)',
-      'rgba(30, 144, 255, 0.18)',
-      'rgba(30, 80, 120, 0.2)',
-      'rgba(45, 120, 160, 0.18)',
-      'rgba(32, 110, 165, 0.18)',
-      'rgba(30, 50, 160, 0.18)',
-      'rgba(10, 30, 105, 0.18)',
-      'rgba(0, 206, 209, 0.15)',
-      'rgba(65, 105, 225, 0.15)'
-    ];
-
-    const numBlobs = 8 + Math.floor(Math.random() * 5);
-    const blobsContainer = document.getElementById('blobs-container');
-    if (!blobsContainer) return;
-
-    for (let i = 0; i < numBlobs; i++) {
-      const blob = document.createElement('div');
-      blob.className = 'blob';
-
-      const size = 300 + Math.random() * 300;
-      blob.style.width = size + 'px';
-      blob.style.height = size + 'px';
-
-      const xBias = 0.3 + Math.random() * 0.7;
-      blob.style.left = (xBias * 100) + '%';
-      blob.style.top = (Math.random() * 100) + '%';
-      blob.style.transform = 'translate(-50%, -50%)';
-
-      blob.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-
-      const fadeDuration = 6 + Math.random() * 8;
-      const floatDuration = 12 + Math.random() * 16;
-      const fadeDelay = Math.random() * 5;
-      const floatDelay = Math.random() * 5;
-
-      blob.style.animation =
-        'blobFade ' + fadeDuration + 's ease-in-out ' + fadeDelay + 's infinite, ' +
-        'blobFloat ' + floatDuration + 's ease-in-out ' + floatDelay + 's infinite';
-
-      blobsContainer.appendChild(blob);
-    }
-
-    return () => {
-      if (blobsContainer) {
-        blobsContainer.innerHTML = '';
-      }
-    };
-  }, []);
+  // Removed blob background for performance
 
   useEffect(() => {
     let isMounted = true;
@@ -350,8 +299,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#1a1f2e] text-white relative overflow-hidden">
-      {/* Animated blobs background */}
-      <div id="blobs-container" className="fixed inset-0 pointer-events-none z-0" />
 
       <script
         type="application/ld+json"
