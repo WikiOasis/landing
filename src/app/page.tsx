@@ -139,11 +139,11 @@ const faq = [
     title: "Can I use my own domain name?",
     content: ( <>
       Yes, you can! After creating your wiki, visit{" "}
-      <InternalLink href="https://meta.wikioasis.org/wiki/Special:RequestSSL">Special:RequestSSL</InternalLink>{" "}
+      <InternalLink href="https://meta.wikioasis.org/wiki/Special:RequestCustomDomain">Special:RequestCustomDomain</InternalLink>{" "}
       to submit a request for your custom domain to be setup by our team, remember to point a CNAME record to yourwiki.wikioasis.org.
     </>
     ),
-    textContent: "Yes, you can! After creating your wiki, visit Special:RequestSSL to submit a request for your custom domain to be setup by our team, remember to point a CNAME record to yourwiki.wikioasis.org.",
+    textContent: "Yes, you can! After creating your wiki, visit Special:RequestCustomDomain to submit a request for your custom domain to be setup by our team, remember to point a CNAME record to yourwiki.wikioasis.org.",
   },
 ] as const;
 
