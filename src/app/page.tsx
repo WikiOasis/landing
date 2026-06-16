@@ -234,7 +234,7 @@ function StatLine() {
 
   const roundDown = (n: number) => Math.floor(n / 100) * 100;
   const wikisLabel = wikis != null ? `${roundDown(wikis)}+` : "800+";
-  const usersLabel = users != null ? `${roundDown(users)}+` : "18000+";
+  const usersLabel = users != null ? `${roundDown(users)}+` : "17900+";
 
   const stats = [
     `${wikisLabel} wikis`,
