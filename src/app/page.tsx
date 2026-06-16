@@ -197,7 +197,7 @@ function StatLine() {
     async function load() {
       try {
         const res = await fetch(
-          "https://meta.wikioasis.org/api.php?action=query&meta=siteinfo&siprop=statistics&format=json&origin=*",
+          "https://meta.wikioasis.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json&origin=*",
           { cache: "no-store" }
         );
         if (!res.ok) return;
