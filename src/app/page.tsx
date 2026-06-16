@@ -1,5 +1,6 @@
 'use client';
 import Accordion from "@/components/Accordion";
+import QuadrantCluster, { STACK_PETALS } from "@/components/QuadrantCluster";
 import ThemeToggle from "@/components/ThemeToggle";
 import { ArrowRight } from "lucide-react";
 import { JSX, memo, useEffect, useState } from "react";
@@ -244,11 +245,11 @@ function StatLine() {
 
   return (
     <div
-      className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-1 text-base font-light text-body/90"
+      className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-light text-body/90"
       suppressHydrationWarning
     >
       {stats.map((s, i) => (
-        <span key={s} className="flex items-center gap-3">
+        <span key={s} className="flex items-center gap-2">
           {i > 0 && <span className="h-[5px] w-[5px] rounded-full bg-current" />}
           {s}
         </span>
@@ -291,20 +292,31 @@ export default function Home() {
 
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="grid lg:grid-cols-[1fr_minmax(0,960px)]">
-          <div className="w-full max-w-[760px] animate-[fadeInUp_700ms_ease-out] px-6 pb-12 pt-16 lg:self-center lg:pb-28 lg:pl-12 lg:pr-8 lg:pt-28">
-            <h1 className="font-serif text-5xl font-semibold leading-[1.1] text-body sm:text-6xl lg:text-[64px]">
+        <div className="grid lg:grid-cols-[1fr_minmax(0,820px)]">
+          <div className="w-full max-w-[680px] animate-[fadeInUp_700ms_ease-out] px-6 pb-10 pt-14 lg:self-center lg:pb-24 lg:pl-12 lg:pr-8 lg:pt-24">
+            <h1 className="font-serif text-4xl font-semibold leading-[1.1] text-body sm:text-5xl lg:text-[52px] pr-4">
               Wiki hosting that just works.
             </h1>
-            <StatLine />
+              <div className="pb-6"><StatLine /></div>
             <div className="mt-10 sm:hidden">
               <GetStartedButton />
             </div>
           </div>
 
           {/* Browser mockup — flush to the right & bottom edges, frame only top-left */}
-          <div className="px-6 pb-12 lg:self-end lg:p-0">
-            <div className="rounded-tl-[20px] bg-button pl-3 pt-3 shadow-2xl">
+          <div className="relative px-6 pb-12 lg:self-end lg:p-0">
+            {/* Circle-quadrant cluster, tucked into the gap just left of the
+                mockup, bottom-aligned and slightly overlapping behind it */}
+            <QuadrantCluster className="absolute bottom-0 right-full z-0 hidden w-[300px] translate-x-[90px] lg:block xl:w-[380px] 2xl:w-[480px]" />
+
+            {/* Mobile: skip the heavy browser image and show the same hero
+                quadrant cluster, anchored to the bottom-right edge */}
+            <div className="-mr-6 flex justify-end pt-2 lg:hidden">
+              <QuadrantCluster className="w-[280px] max-w-full translate-x-[24px]" />
+            </div>
+
+            {/* Desktop: the browser mockup */}
+            <div className="relative z-10 hidden rounded-tl-[20px] bg-button pl-3 pt-3 shadow-2xl lg:block">
               <img
                 src="/hero-mockup.png"
                 alt="A preview of a wiki hosted on WikiOasis"
@@ -367,8 +379,16 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-line bg-background-alt">
-        <div className="mx-auto flex max-w-[1600px] flex-col items-center gap-3 px-6 py-10 text-center lg:px-12">
+      <footer className="relative border-t border-line bg-background-alt">
+        {/* A little flair — an independent quadrant stack that rises up out of
+            the footer along the right edge */}
+        <QuadrantCluster
+          petals={STACK_PETALS}
+          gridW={200}
+          gridH={500}
+          className="absolute bottom-0 right-[6%] z-0 hidden w-[140px] lg:right-[8%] lg:block"
+        />
+        <div className="relative z-10 mx-auto flex max-w-[1600px] flex-col items-center gap-3 px-6 py-10 text-center lg:px-12">
           <div className="flex items-center gap-2">
             <img src="/WikiOasis.png" alt="" className="h-6 w-6" aria-hidden />
             <span className="font-serif text-lg font-semibold text-title">
