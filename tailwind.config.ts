@@ -10,12 +10,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        bg: "#0F0F0F",
-        bg2: "#131313",
-        line: "#1A1A1A",
-        text: "#E6E6E6",
-        muted: "#9A9A9A",
-        accent: "#3A86FF",
+        // Mapped to Figma variables (light/dark modes via CSS vars)
+        background: "var(--background)",
+        "background-alt": "var(--background-alt)",
+        body: "var(--body-text)",
+        title: "var(--title-text)",
+        button: "var(--button)",
+        "button-text": "var(--button-text)",
+        line: "var(--line)",
+      },
+      fontFamily: {
+        sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
+        serif: ["var(--font-noto-serif)", "ui-serif", "Georgia", "serif"],
       },
     },
   },

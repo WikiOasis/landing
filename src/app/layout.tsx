@@ -1,10 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Noto_Serif } from "next/font/google";
 import "./globals.css";
 import { Organization, WithContext } from "schema-dts";
 
 const interSans = Inter({
   subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+const notoSerif = Noto_Serif({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  variable: "--font-noto-serif",
 });
 
 export const metadata: Metadata = {
@@ -73,7 +80,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#141414",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f4f7fa" },
+    { media: "(prefers-color-scheme: dark)", color: "#1c2a36" },
+  ],
   initialScale: 1,
 };
 
@@ -92,8 +102,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${interSans.className} antialiased bg-bg text-text`}>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',d);}catch(e){}})();`,
+          }}
+        />
+      </head>
+      <body
+        className={`${interSans.variable} ${notoSerif.variable} font-sans antialiased bg-background text-body`}
+      >
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organization) }}

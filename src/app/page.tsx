@@ -1,22 +1,15 @@
 'use client';
 import Accordion from "@/components/Accordion";
-import {
-  ArrowRight,
-  Hammer,
-  HandCoins,
-  Headset,
-  MegaphoneOff,
-  Users2,
-  Wrench,
-} from "lucide-react";
+import ThemeToggle from "@/components/ThemeToggle";
+import { ArrowRight } from "lucide-react";
 import { JSX, memo, useEffect, useState } from "react";
 import { FAQPage, WithContext, WebSite } from "schema-dts";
-import { Typewriter } from 'react-simple-typewriter';
 
 const linkClasses =
-  "text-accent link-underline transition-colors duration-200 ease-in-out hover:opacity-90";
+  "link-underline text-button font-medium transition-opacity hover:opacity-90";
 
 const discordLink = "https://discord.gg/Hc249nXbak";
+const requestWikiLink = "https://meta.wikioasis.org/wiki/Special:RequestWiki";
 
 const InternalLink = memo(function InternalLink({
   href,
@@ -34,89 +27,88 @@ const ExternalLink = memo(function ExternalLink({
   children,
 }: JSX.IntrinsicElements["a"]) {
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={linkClasses}
-    >
+    <a href={href} target="_blank" rel="noopener noreferrer" className={linkClasses}>
       {children}
     </a>
   );
 });
 
-const RequestWikiButton = memo(function RequestWikiButton() {
+const GetStartedButton = memo(function GetStartedButton({
+  className = "",
+}: {
+  className?: string;
+}) {
   return (
     <a
       role="button"
-      href="https://meta.wikioasis.org/wiki/Special:RequestWiki"
-      className="px-8 py-3 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white rounded-2xl font-medium transition-all hover:-translate-y-0.5 hover:scale-[1.02] focus:focus-ring border border-blue-400/30 shadow-xl hover:shadow-2xl hover:from-blue-400 hover:via-blue-500 hover:to-blue-600 flex items-center justify-center gap-2 backdrop-blur-xl"
+      href={requestWikiLink}
+      className={`inline-flex items-center justify-center gap-2 rounded-full bg-button px-6 py-2.5 text-base font-medium text-button-text transition-all hover:opacity-90 focus:outline-none focus-visible:focus-ring ${className}`}
     >
-      Request a wiki
-      <ArrowRight size={20} />
+      Get Started
+      <ArrowRight size={16} />
     </a>
   );
 });
 
-const typewriterWords = [
-  '...your favorite game',
-  '...your book series',
-  '...your new coding project',
-  '...anything',
-];
+type Feature = {
+  icon: string;
+  title: string;
+  description: React.ReactNode;
+};
 
-const features = [
+const features: readonly Feature[] = [
   {
-    icon: <HandCoins />,
-    title: "Free, forever",
+    icon: "/figma-icons/free.svg",
+    title: "Free, truly",
     description:
-      "Our services are free, and will remain free. There are no hidden fees or charges, ever (although we appreciate donations).",
+      "WikiOasis will always remain free for use. Our services will never have hidden fees, nor will you ever have to pay for additional features. We do, however, appreciate donations from users.",
   },
   {
-    icon: <MegaphoneOff />,
-    title: "Ad-free",
+    icon: "/figma-icons/moderation.svg",
+    title: "Moderation, led by you",
     description:
-      "We never show adverts, so your content can shine through the way you intended it to.",
+      "Our global enforcement teams work with you to ensure that your content stays clear of disruption or policy violations. We will never intervene in a way that undermines local administrators except in the case of severe global policy or legal violations, when we try to work with local administration to mitigate the issue.",
   },
   {
-    icon: <Wrench />,
-    title: "Customizable, and then some",
+    icon: "/figma-icons/customise.svg",
+    title: "Truly yours to customise",
     description:
-      "Almost all settings on your wiki are customisable, change the theme, add extensions, and more!",
+      "With over 300 extensions, and over 30 skins, you can customise to your heart’s content. Additionally, nearly all settings are customisable through the self service ManageWiki system. For those which are not customisable self serve, our support typically fulfil all reasonable requests.",
   },
   {
-    icon: <Users2 />,
-    title: "Community focused",
+    icon: "/figma-icons/community.svg",
+    title: "Community led",
     description:
-      "We are powered by the community. We're always listening to your feedback and improving our platform.",
+      "WikiOasis is managed by the community. Almost all roles are community elected, and policy changes are community decided through public requests for comment.",
   },
   {
-    icon: <Hammer />,
-    title: "Vandalism, no biggie",
+    icon: "/figma-icons/noadverts.svg",
+    title: "No adverts",
     description:
-      "We actively monitor your wiki using a mix of automated and human review to ensure vandalism is quickly cleaned up.",
+      "We will never show adverts. We want your content to be able to shine through, the way that you intended it to, not to be disturbed by popup or autoplaying adverts.",
   },
   {
-    icon: <Headset />,
-    title: "Support",
+    icon: "/figma-icons/help.svg",
+    title: "Here to help, whenever",
     description: (
       <>
-        Stuck? We'll help you, reach out to us on {" "}
+        Stuck on something? There are always helpful volunteers who can assist
+        you. Reach out on{" "}
         <ExternalLink href={discordLink}>Discord</ExternalLink>,{" "}
-        <InternalLink href="https://phorge.wikioasis.org">Phorge</InternalLink>,
-        <InternalLink href="https://meta.wikioasis.org"> Meta </InternalLink>
-        or {" "}
+        <InternalLink href="https://phorge.wikioasis.org">Phorge</InternalLink>,{" "}
+        <InternalLink href="https://meta.wikioasis.org">Meta</InternalLink> or{" "}
         <InternalLink href="mailto:stewards@wikioasis.org">email us</InternalLink>
-        ! We're always happy to help.
+        , we’d be happy to assist.
       </>
     ),
   },
-] as const;
+];
 
 const faq = [
   {
     title: "How many hours does it take for my wiki to be created?",
-    content: "We aim to review all requests within 24 hours, although most are reviewed within a few hours.",
+    content:
+      "We aim to review all requests within 24 hours, although most are reviewed within a few hours.",
   },
   {
     title: "Can I move here from another wiki host?",
@@ -133,17 +125,23 @@ const faq = [
   },
   {
     title: "Is it possible to create a private wiki?",
-    content: "Of course! Just check the 'Private' box when requesting your wiki.",
+    content:
+      "Of course! Just check the 'Private' box when requesting your wiki.",
   },
   {
     title: "Can I use my own domain name?",
-    content: ( <>
-      Yes, you can! After creating your wiki, visit{" "}
-      <InternalLink href="https://meta.wikioasis.org/wiki/Special:RequestSSL">Special:RequestSSL</InternalLink>{" "}
-      to submit a request for your custom domain to be setup by our team, remember to point a CNAME record to yourwiki.wikioasis.org.
-    </>
+    content: (
+      <>
+        Yes, you can! After creating your wiki, visit{" "}
+        <InternalLink href="https://meta.wikioasis.org/wiki/Special:RequestSSL">
+          Special:RequestSSL
+        </InternalLink>{" "}
+        to submit a request for your custom domain to be setup by our team,
+        remember to point a CNAME record to yourwiki.wikioasis.org.
+      </>
     ),
-    textContent: "Yes, you can! After creating your wiki, visit Special:RequestSSL to submit a request for your custom domain to be setup by our team, remember to point a CNAME record to yourwiki.wikioasis.org.",
+    textContent:
+      "Yes, you can! After creating your wiki, visit Special:RequestSSL to submit a request for your custom domain to be setup by our team, remember to point a CNAME record to yourwiki.wikioasis.org.",
   },
 ] as const;
 
@@ -155,8 +153,7 @@ const faqSchema: WithContext<FAQPage> = {
       typeof x.content === "string"
         ? x.content
         : "textContent" in x
-        ? // when content is JSX we prefer an explicit textContent field if provided
-          (x as typeof x & { textContent: string }).textContent ?? ""
+        ? (x as typeof x & { textContent: string }).textContent ?? ""
         : "";
 
     return {
@@ -178,273 +175,215 @@ const webSiteSchema: WithContext<WebSite> = {
   url: "https://wikioasis.org",
 };
 
-export default function Home() {
-  const [stats, setStats] = useState<{
-    users?: number;
-    activeusers?: number;
-  } | null>(null);
-  const [statsError, setStatsError] = useState<string | null>(null);
-  const [displayUsers, setDisplayUsers] = useState<number>(0);
-  const [wikis, setWikis] = useState<number | null>(null);
-  const [displayWikis, setDisplayWikis] = useState<number>(0);
-  const [displayActiveUsers, setDisplayActiveUsers] = useState<number>(0);
-  // ...existing code...
-  const [wikisError, setWikisError] = useState<string | null>(null);
+function FeatureIcon({ src }: { src: string }) {
+  return (
+    <span
+      aria-hidden
+      className="mask-icon block h-12 w-12 text-body"
+      style={{
+        maskImage: `url(${src})`,
+        WebkitMaskImage: `url(${src})`,
+      }}
+    />
+  );
+}
 
-  // Removed blob background for performance
+function StatLine() {
+  const [wikis, setWikis] = useState<number | null>(null);
+  const [users, setUsers] = useState<number | null>(null);
 
   useEffect(() => {
-    let isMounted = true;
-    async function loadStats() {
+    let mounted = true;
+    async function load() {
       try {
-        const url =
-          "https://meta.wikioasis.org/api.php?action=query&meta=siteinfo&siprop=statistics&format=json&origin=*";
-        const res = await fetch(url, { cache: "no-store" });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const res = await fetch(
+          "https://meta.wikioasis.org/api.php?action=query&meta=siteinfo&siprop=statistics&format=json&origin=*",
+          { cache: "no-store" }
+        );
+        if (!res.ok) return;
         const data = await res.json();
-        const s = data?.query?.statistics;
-        if (isMounted && s) {
-          setStats({ users: s.users, activeusers: s.activeusers });
+        if (mounted && data?.query?.statistics?.users) {
+          setUsers(data.query.statistics.users);
         }
       } catch {
-        if (isMounted) setStatsError("Failed to load stats");
+        /* keep fallback */
       }
     }
-    loadStats();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!stats?.users || displayUsers === stats.users) return;
-    let frame: number;
-    const start = performance.now();
-    const to = stats.users;
-    const from = displayUsers || 0;
-    const distance = Math.max(0, to - from);
-    const duration = Math.min(1800, Math.max(900, distance * 0.8));
-    const easeOutExpo = (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
-    const tick = (now: number) => {
-      const elapsed = Math.min(1, (now - start) / duration);
-      const value = Math.floor(from + (to - from) * easeOutExpo(elapsed));
-      setDisplayUsers(value);
-      if (elapsed < 1) frame = requestAnimationFrame(tick);
-    };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [stats?.users, displayUsers]);
-
-  useEffect(() => {
-    if (!stats?.activeusers || displayActiveUsers === stats.activeusers) return;
-    let frame: number;
-    const start = performance.now();
-    const to = stats.activeusers;
-    const from = displayActiveUsers || 0;
-    const distance = Math.max(0, to - from);
-    const duration = Math.min(1800, Math.max(900, distance * 0.8));
-    const easeOutExpo = (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
-    const tick = (now: number) => {
-      const elapsed = Math.min(1, (now - start) / duration);
-      const value = Math.floor(from + (to - from) * easeOutExpo(elapsed));
-      setDisplayActiveUsers(value);
-      if (elapsed < 1) frame = requestAnimationFrame(tick);
-    };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [stats?.activeusers, displayActiveUsers]);
-
-  useEffect(() => {
-    let isMounted = true;
-    async function fetchWikis() {
+    async function loadWikis() {
       try {
-        const url =
-          "https://meta.wikioasis.org/api.php?action=parse&format=json&prop=text&contentmodel=wikitext&text=%7B%7BNUMBEROFWIKIS%7D%7D&origin=*";
-        const res = await fetch(url, { cache: "no-store" });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const res = await fetch(
+          "https://meta.wikioasis.org/api.php?action=parse&format=json&prop=text&contentmodel=wikitext&text=%7B%7BNUMBEROFWIKIS%7D%7D&origin=*",
+          { cache: "no-store" }
+        );
+        if (!res.ok) return;
         const data = await res.json();
         const html: string | undefined = data?.parse?.text?.["*"];
-        if (!html) throw new Error("Empty response");
-        const text = html.replace(/<[^>]+>/g, "").trim();
-        const num = parseInt(text.replace(/[,\s]/g, ""), 10);
-        if (isMounted && Number.isFinite(num)) setWikis(num);
+        if (!html) return;
+        const num = parseInt(html.replace(/<[^>]+>/g, "").replace(/[,\s]/g, ""), 10);
+        if (mounted && Number.isFinite(num)) setWikis(num);
       } catch {
-        if (isMounted) setWikisError("Failed to load wikis count");
+        /* keep fallback */
       }
     }
-    fetchWikis();
+    load();
+    loadWikis();
     return () => {
-      isMounted = false;
+      mounted = false;
     };
   }, []);
 
-  useEffect(() => {
-    if (wikis == null || displayWikis === wikis) return;
-    let frame: number;
-    const start = performance.now();
-    const to = wikis;
-    const from = displayWikis || 0;
-    const distance = Math.max(0, to - from);
-    const duration = Math.min(1800, Math.max(900, distance * 0.8));
-    const easeOutExpo = (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
-    const tick = (now: number) => {
-      const elapsed = Math.min(1, (now - start) / duration);
-      const value = Math.floor(from + (to - from) * easeOutExpo(elapsed));
-      setDisplayWikis(value);
-      if (elapsed < 1) frame = requestAnimationFrame(tick);
-    };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [wikis, displayWikis]);
+  const roundDown = (n: number) => Math.floor(n / 100) * 100;
+  const wikisLabel = wikis != null ? `${roundDown(wikis)}+` : "800+";
+  const usersLabel = users != null ? `${roundDown(users)}+` : "18000+";
+
+  const stats = [
+    `${wikisLabel} wikis`,
+    `${usersLabel} users`,
+    "450000+ pages",
+  ];
 
   return (
-    <div className="min-h-screen bg-[#1a1f2e] text-white relative overflow-hidden">
+    <div
+      className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-1 text-base font-light text-body/90"
+      suppressHydrationWarning
+    >
+      {stats.map((s, i) => (
+        <span key={s} className="flex items-center gap-3">
+          {i > 0 && <span className="h-[5px] w-[5px] rounded-full bg-current" />}
+          {s}
+        </span>
+      ))}
+    </div>
+  );
+}
 
+export default function Home() {
+  return (
+    <div className="min-h-screen bg-background text-body">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify([faqSchema, webSiteSchema]) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([faqSchema, webSiteSchema]),
+        }}
       />
-      <nav className="container mx-auto px-6 py-6 relative z-10">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src="/WikiOasis.png" alt="WikiOasis Logo" className="w-8 h-8 sm:w-10 sm:h-10" />
-            <div className="text-xl font-bold text-white">WikiOasis</div>
-          </div>
-          <div className="flex md:hidden">
-            <a
-              href="https://meta.wikioasis.org"
-              className="text-sm font-medium text-white/70 hover:text-white transition-colors"
-            >
-              Meta
-            </a>
-          </div>
-          <div className="hidden md:flex space-x-6 lg:space-x-8">
-            <InternalLink href="https://meta.wikioasis.org">
-              Meta-Wiki
-            </InternalLink>
-            <InternalLink href="https://phorge.wikioasis.org">
-              Phorge
-            </InternalLink>
-            <ExternalLink href={discordLink}>Discord</ExternalLink>
-          </div>
-        </div>
-      </nav>
 
-      <main className="container mx-auto px-6 pt-16 sm:pt-20 pb-16 relative z-10">
-        <div className="max-w-6xl">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold inline-flex flex-col gap-2 sm:gap-3 pb-2 animate-[fadeInUp_700ms_ease-out]">
-            <span>Write about</span>
-            <span className="glow-accent pb-2 text-[#6B9FFF]">
-              <Typewriter
-                words={typewriterWords}
-                loop={0}
-                cursor
-                cursorStyle="|"
-                typeSpeed={60}
-                deleteSpeed={40}
-                delaySpeed={1500}
-              />
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md">
+        <nav className="mx-auto flex h-20 max-w-[1600px] items-center justify-between px-6 lg:px-12">
+          <a href="/" className="flex items-center gap-3">
+            <img
+              src="/WikiOasis.png"
+              alt="WikiOasis logo"
+              className="h-9 w-9"
+            />
+            <span className="font-serif text-2xl font-semibold text-title">
+              WikiOasis
             </span>
-          </h1>
-          <p className="mt-6 sm:mt-8 text-lg sm:text-xl lg:text-2xl text-white/70 max-w-2xl leading-relaxed">
-            Create a customizable wiki, with no adverts, for free. Start writing with us today.
-          </p>
-          <div className="mt-10 flex flex-col sm:flex-row gap-4">
-            <RequestWikiButton />
-            <a
-              role="button"
-              href="https://meta.wikioasis.org/wiki/Special:UserLogin"
-              className="px-8 py-3 rounded-2xl font-medium transition-all hover:-translate-y-0.5 hover:scale-[1.02] focus:focus-ring border border-white/15 bg-white/5 backdrop-blur-xl hover:bg-white/10 hover:border-white/25 flex items-center justify-center gap-2 shadow-lg"
-            >
-              Log in
-            </a>
+          </a>
+          <div className="flex items-center gap-4 sm:gap-6">
+            <InternalLink href="https://meta.wikioasis.org">Meta</InternalLink>
+            <ExternalLink href={discordLink}>Discord</ExternalLink>
+            <GetStartedButton className="hidden sm:inline-flex" />
+            <ThemeToggle />
           </div>
-        </div>
+        </nav>
+      </header>
 
-        {/* Live counters */}
-        <div className="mt-16 sm:mt-20">
-          <div className="max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="p-6 sm:p-8 rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-2xl shadow-2xl transition-all duration-300 hover:bg-white/[0.06] hover:border-white/20 hover:-translate-y-1 hover:shadow-[0_20px_60px_-15px_rgba(255,255,255,0.1)]">
-              <div className="text-sm text-white/50 font-medium">Trusted by</div>
-              <div className="mt-2 text-4xl sm:text-5xl font-bold tabular-nums text-white">
-                {stats ? displayUsers.toLocaleString() : "—"}
-              </div>
-              <div className="text-sm text-white/50 font-medium">users</div>
-            </div>
-            <div className="p-6 sm:p-8 rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-2xl shadow-2xl transition-all duration-300 hover:bg-white/[0.06] hover:border-white/20 hover:-translate-y-1 hover:shadow-[0_20px_60px_-15px_rgba(255,255,255,0.1)]">
-              <div className="text-sm text-white/50 font-medium">Made possible by</div>
-              <div className="mt-2 text-4xl sm:text-5xl font-bold tabular-nums text-white">
-                {stats ? displayActiveUsers.toLocaleString() : "—"}
-              </div>
-              <div className="text-sm text-white/50 font-medium">active editors</div>
-            </div>
-            <div className="p-6 sm:p-8 rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-2xl shadow-2xl transition-all duration-300 hover:bg-white/[0.06] hover:border-white/20 hover:-translate-y-1 hover:shadow-[0_20px_60px_-15px_rgba(255,255,255,0.1)] sm:col-span-2 lg:col-span-1">
-              <div className="text-sm text-white/50 font-medium">Home to</div>
-              <div className="mt-2 text-4xl sm:text-5xl font-bold tabular-nums text-white">
-                {wikis != null ? displayWikis.toLocaleString() : "—"}
-              </div>
-              <div className="text-sm text-white/50 font-medium">wikis</div>
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="grid lg:grid-cols-[1fr_minmax(0,960px)]">
+          <div className="w-full max-w-[760px] animate-[fadeInUp_700ms_ease-out] px-6 pb-12 pt-16 lg:self-center lg:pb-28 lg:pl-12 lg:pr-8 lg:pt-28">
+            <h1 className="font-serif text-5xl font-semibold leading-[1.1] text-body sm:text-6xl lg:text-[64px]">
+              Wiki hosting that just works.
+            </h1>
+            <StatLine />
+            <div className="mt-10 sm:hidden">
+              <GetStartedButton />
             </div>
           </div>
-          {(statsError || wikisError) && (
-            <p className="mt-4 text-white/50 text-sm">{statsError || wikisError}</p>
-          )}
-        </div>
 
-        <div className="mt-24 sm:mt-32 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {features.map((x, i) => (
-            <section
-              key={i}
-              className="p-6 sm:p-8 rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-2xl shadow-2xl transition-all duration-300 hover:bg-white/[0.06] hover:border-white/20 hover:-translate-y-1 hover:shadow-[0_20px_60px_-15px_rgba(255,255,255,0.1)]"
-            >
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-400/20 via-blue-500/15 to-blue-600/20 backdrop-blur-xl flex items-center justify-center animate-[float_6s_ease-in-out_infinite] shadow-lg shadow-blue-500/10 border border-blue-400/20">
-                {x.icon}
-              </div>
-              <h2 className="mt-6 text-xl font-semibold">{x.title}</h2>
-              <p className="mt-3 text-white/60 leading-relaxed">{x.description}</p>
-            </section>
-          ))}
+          {/* Browser mockup — flush to the right & bottom edges, frame only top-left */}
+          <div className="px-6 pb-12 lg:self-end lg:p-0">
+            <div className="rounded-tl-[20px] bg-button pl-3 pt-3 shadow-2xl">
+              <img
+                src="/hero-mockup.png"
+                alt="A preview of a wiki hosted on WikiOasis"
+                className="block w-full rounded-tl-[10px]"
+              />
+            </div>
+          </div>
         </div>
+      </section>
 
-        <div className="mt-24 sm:mt-32">
-          <h2 className="text-3xl md:text-4xl font-semibold">
-            Frequently Asked Questions
+      {/* Features */}
+      <section className="bg-background-alt">
+        <div className="mx-auto max-w-[1440px] px-6 py-20 lg:px-12 lg:py-28">
+          <div className="overflow-hidden">
+            <div className="-mb-px -mr-px grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {features.map((f) => (
+                <article
+                  key={f.title}
+                  className="flex flex-col border-b border-r border-line px-8 py-10 lg:min-h-[360px] lg:px-10"
+                >
+                  <FeatureIcon src={f.icon} />
+                  <h2 className="mt-8 font-serif text-2xl font-bold text-body">
+                    {f.title}
+                  </h2>
+                  <p className="mt-4 text-base leading-relaxed text-body/90">
+                    {f.description}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="bg-background">
+        <div className="mx-auto max-w-[1100px] px-6 py-20 lg:px-12 lg:py-28">
+          <h2 className="font-serif text-4xl font-semibold text-body">
+            Frequently asked questions
           </h2>
-          <div className="mt-8">
+          <div className="mt-10">
             <Accordion items={faq} />
           </div>
         </div>
+      </section>
 
-        <div className="mt-24 sm:mt-32">
-          <h2 className="text-3xl md:text-4xl font-semibold">
+      {/* CTA */}
+      <section className="bg-background">
+        <div className="mx-auto max-w-[1600px] px-6 pb-24 lg:px-12">
+          <h2 className="font-serif text-5xl font-semibold text-body sm:text-6xl lg:text-[64px]">
             Ready to get started?
           </h2>
-          <p className="mt-4 text-white/60 text-lg">
-            Start your wiki journey with us.
+          <p className="mt-4 text-base font-light text-body/90">
+            Start your wiki journey with us (it’s free, forever).
           </p>
-          <div className="mt-6">
-            <RequestWikiButton />
+          <div className="mt-8">
+            <GetStartedButton />
           </div>
         </div>
-      </main>
-      <footer className="bg-[#1a1f2e]/50 backdrop-blur-md text-center py-8 border-t border-white/10 relative z-10">
-        <div className="container mx-auto">
-          <p className="text-white/60" suppressHydrationWarning>
-            &copy; 2024-{new Date().getFullYear()} WikiOasis. All rights
-            reserved.
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-line bg-background-alt">
+        <div className="mx-auto flex max-w-[1600px] flex-col items-center gap-3 px-6 py-10 text-center lg:px-12">
+          <div className="flex items-center gap-2">
+            <img src="/WikiOasis.png" alt="" className="h-6 w-6" aria-hidden />
+            <span className="font-serif text-lg font-semibold text-title">
+              WikiOasis
+            </span>
+          </div>
+          <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-body/80">
+            <InternalLink href="https://meta.wikioasis.org">Meta-Wiki</InternalLink>
+            <span className="h-[4px] w-[4px] rounded-full bg-body/40" />
+            <InternalLink href="https://phorge.wikioasis.org">Phorge</InternalLink>
+            <span className="h-[4px] w-[4px] rounded-full bg-body/40" />
+            <ExternalLink href={discordLink}>Discord</ExternalLink>
           </p>
-          <p className="mt-2 text-muted">Made with ❤️ by WikiOasis</p>
-        </div>
-        <div className="container mx-auto">
-          <p className="mt-2 text-muted">
-            <InternalLink href="https://meta.wikioasis.org">
-              Meta-Wiki
-            </InternalLink>{" "}
-            -{" "}
-            <InternalLink href="https://phorge.wikioasis.org">
-              Phorge
-            </InternalLink>{" "}
-            - <ExternalLink href="https://discord.gg/Hc249nXbak">Discord</ExternalLink>
+          <p className="text-sm text-body/70" suppressHydrationWarning>
+            &copy; 2024–{new Date().getFullYear()} WikiOasis. All rights reserved.
           </p>
         </div>
       </footer>

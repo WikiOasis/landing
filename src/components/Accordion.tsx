@@ -13,24 +13,30 @@ const AccordionItem = memo(function AccordionItem({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-2xl shadow-2xl overflow-hidden transition-all duration-300 hover:bg-white/[0.06] hover:border-white/20">
+    <div className="border-b border-line">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between py-5 px-6 sm:px-8 text-left focus:outline-none group"
+        className="group flex w-full items-center justify-between gap-4 py-6 text-left focus:outline-none focus-visible:focus-ring"
       >
-        <span className="font-medium text-white text-base sm:text-lg">{title}</span>
+        <span className="font-serif text-lg font-semibold text-body sm:text-xl">
+          {title}
+        </span>
         <ChevronDown
-          className={`h-5 w-5 transition-all duration-300 text-white/60 group-hover:text-white/80 flex-shrink-0 ml-4 ${
+          className={`h-5 w-5 flex-shrink-0 text-body/60 transition-transform duration-300 group-hover:text-body ${
             isOpen ? "rotate-180" : ""
           }`}
         />
       </button>
       <div
-        className={`transition-all duration-300 ease-in-out ${
-          isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
-        } overflow-hidden`}
+        className={`grid transition-all duration-300 ease-in-out ${
+          isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+        }`}
       >
-        <div className="px-6 sm:px-8 pb-5 sm:pb-6 text-base text-white/60 leading-relaxed">{children}</div>
+        <div className="overflow-hidden">
+          <div className="max-w-3xl pb-6 text-base leading-relaxed text-body/80">
+            {children}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -42,7 +48,7 @@ const Accordion = memo(function Accordion({
   items: readonly { title: string; content: React.ReactNode }[];
 }) {
   return (
-    <div className="space-y-4">
+    <div className="border-t border-line">
       {items.map((item, index) => (
         <AccordionItem key={index} title={item.title}>
           {item.content}
