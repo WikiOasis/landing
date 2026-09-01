@@ -1,6 +1,7 @@
 'use client';
 import Accordion from "@/components/Accordion";
-import QuadrantCluster, { STACK_PETALS } from "@/components/QuadrantCluster";
+import QuadrantCluster, { BLOOM_PETALS, STACK_PETALS } from "@/components/QuadrantCluster";
+import SpeedChart from "@/components/SpeedChart";
 import ThemeToggle from "@/components/ThemeToggle";
 import { ArrowRight } from "lucide-react";
 import { JSX, memo, useEffect, useState } from "react";
@@ -8,6 +9,13 @@ import { FAQPage, WithContext, WebSite } from "schema-dts";
 
 const linkClasses =
   "link-underline text-button font-medium transition-opacity hover:opacity-90";
+
+const heroTaglines = [
+  "that just works.",
+  "that’s fast as f*ck.",
+  "that’s free, forever.",
+  "that’s truly yours.",
+];
 
 const discordLink = "https://discord.gg/Hc249nXbak";
 const requestWikiLink = "https://meta.wikioasis.org/wiki/Special:RequestWiki";
@@ -62,7 +70,7 @@ const features: readonly Feature[] = [
     icon: "/figma-icons/free.svg",
     title: "Free, truly",
     description:
-      "WikiOasis will always remain free for use. Our services will never have hidden fees, nor will you ever have to pay for additional features. We do, however, appreciate donations from users.",
+      "WikiOasis will always be free for use. Our services will never have hidden fees, nor will you ever have to pay for additional features. We do, however, appreciate donations from users.",
   },
   {
     icon: "/figma-icons/moderation.svg",
@@ -176,6 +184,34 @@ const webSiteSchema: WithContext<WebSite> = {
   url: "https://wikioasis.org",
 };
 
+function HeroTagline() {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+
+    const cycle = window.setInterval(
+      () => setIndex((i) => (i + 1) % heroTaglines.length),
+      2600
+    );
+    return () => window.clearInterval(cycle);
+  }, []);
+
+  return (
+    <span
+      className="block min-h-[2.2em] text-title min-[430px]:min-h-[1.15em]"
+      style={{ perspective: "900px" }}
+    >
+      <span
+        key={index}
+        className="inline-block animate-[flipIn_420ms_ease-out] [transform-origin:center_bottom]"
+      >
+        {heroTaglines[index]}
+      </span>
+    </span>
+  );
+}
+
 function FeatureIcon({ src }: { src: string }) {
   return (
     <span
@@ -234,7 +270,7 @@ function StatLine() {
   }, []);
 
   const roundDown = (n: number) => Math.floor(n / 100) * 100;
-  const wikisLabel = wikis != null ? `${roundDown(wikis)}+` : "800+";
+  const wikisLabel = wikis != null ? `${roundDown(wikis)}+` : "950+";
   const usersLabel = users != null ? `${roundDown(users)}+` : "17900+";
 
   const stats = [
@@ -292,38 +328,27 @@ export default function Home() {
 
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="grid lg:grid-cols-[1fr_minmax(0,820px)]">
-          <div className="w-full max-w-[680px] animate-[fadeInUp_700ms_ease-out] px-6 pb-10 pt-14 lg:self-center lg:pb-24 lg:pl-12 lg:pr-8 lg:pt-24">
-            <h1 className="font-serif text-4xl font-semibold leading-[1.1] text-body sm:text-5xl lg:text-[52px] pr-4">
-              Wiki hosting that just works.
+        <div className="relative mx-auto flex max-w-[1600px] flex-col px-6 pb-40 pt-16 sm:pb-48 lg:min-h-[520px] lg:px-12 lg:pb-20 lg:pt-20">
+          <div className="w-full max-w-[calc(100%-120px)] animate-[fadeInUp_700ms_ease-out] sm:max-w-[760px] lg:my-auto">
+            <h1 className="font-serif text-4xl font-semibold leading-[1.1] text-body sm:text-5xl lg:text-[64px]">
+              Wiki hosting{" "}
+              <HeroTagline />
             </h1>
-              <div className="pb-6"><StatLine /></div>
+            <div className="pb-6">
+              <StatLine />
+            </div>
             <div className="mt-10 sm:hidden">
               <GetStartedButton />
             </div>
           </div>
 
-          {/* Browser mockup — flush to the right & bottom edges, frame only top-left */}
-          <div className="relative px-6 pb-12 lg:self-end lg:p-0">
-            {/* Circle-quadrant cluster, tucked into the gap just left of the
-                mockup, bottom-aligned and slightly overlapping behind it */}
-            <QuadrantCluster className="absolute bottom-0 right-full z-0 hidden w-[300px] translate-x-[90px] lg:block xl:w-[380px] 2xl:w-[480px]" />
+          <QuadrantCluster
+            petals={BLOOM_PETALS}
+            gridW={600}
+            gridH={900}
+            className="pointer-events-none absolute bottom-0 right-0 z-0 w-[150px] sm:w-[220px] lg:w-[300px] xl:w-[360px] 2xl:w-[420px]"
+          />
 
-            {/* Mobile: skip the heavy browser image and show the same hero
-                quadrant cluster, anchored to the bottom-right edge */}
-            <div className="-mr-6 flex justify-end pt-2 lg:hidden">
-              <QuadrantCluster className="w-[280px] max-w-full translate-x-[24px]" />
-            </div>
-
-            {/* Desktop: the browser mockup */}
-            <div className="relative z-10 hidden rounded-tl-[20px] bg-button pl-3 pt-3 shadow-2xl lg:block">
-              <img
-                src="/hero-mockup.png"
-                alt="A preview of a wiki hosted on WikiOasis"
-                className="block w-full rounded-tl-[10px]"
-              />
-            </div>
-          </div>
         </div>
       </section>
 
@@ -346,6 +371,38 @@ export default function Home() {
                   </p>
                 </article>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Speed */}
+      <section id="speed" className="bg-background">
+        <div className="mx-auto max-w-[1440px] px-6 py-20 lg:px-12 lg:py-28">
+          <div className="grid gap-12 lg:grid-cols-[minmax(0,400px)_1fr] lg:gap-20">
+            <div>
+              <h2 className="font-serif text-4xl font-semibold leading-[1.15] text-body">
+                Fast by default.
+              </h2>
+              <p className="mt-5 text-base leading-relaxed text-body/90">
+                Every wiki runs on out highly-tuned stack. Cloudflare's caching
+                keeps pages close to your readers, meaning pages load so fast
+                they barely notice.
+
+                Behind Cloudflare, our stack handled requests in around 300ms
+                time-to-first-byte, faster than other wiki hosts, making edits
+                and actions feel like they are instantaneous.
+              </p>
+              <p className="mt-4 text-sm font-light text-body/70">
+                Ordered fastest to slowest. The solid part of each bar is the
+                best time we recorded, the faded part is the worst. Measured
+                from a mix of real user measurements from Google, and from
+                internal performance testing.
+              </p>
+            </div>
+
+            <div className="lg:pt-2">
+              <SpeedChart />
             </div>
           </div>
         </div>
@@ -380,8 +437,6 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="relative border-t border-line bg-background-alt">
-        {/* A little flair — an independent quadrant stack that rises up out of
-            the footer along the right edge */}
         <QuadrantCluster
           petals={STACK_PETALS}
           gridW={200}

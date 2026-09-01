@@ -6,8 +6,6 @@
 type Tone = "light" | "dark";
 
 type Petal = {
-  // Position/size expressed on an arbitrary grid (gridW × gridH units) so the
-  // whole motif can be scaled responsively via percentages.
   x: number;
   y: number;
   size: number;
@@ -20,8 +18,6 @@ const TONE_CLASS: Record<Tone, string> = {
   dark: "from-[#3176b2] to-[#0a5ea8]",
 };
 
-// The hero "flower" — taken from node 1:4 of the Figma file, origin (380, 202)
-// on a 600 × 600 grid.
 export const FLOWER_PETALS: readonly Petal[] = [
   { x: 500, y: 500, size: 100, tone: "dark" },
   { x: 0, y: 400, size: 200, tone: "light" },
@@ -37,21 +33,45 @@ export const FLOWER_PETALS: readonly Petal[] = [
   { x: 400, y: 100, size: 100, tone: "dark", transform: "-scale-y-100 rotate-180" },
 ];
 
-// A tall, independent vertical stack (for the footer & mobile hero) on a
-// 200 × 500 grid. A single petal at the top widens into a two-petal body and
-// a symmetric, flat-bottomed base so the whole thing reads as grounded.
 export const STACK_PETALS: readonly Petal[] = [
-  // Tapered tip (centred)
   { x: 50, y: 0, size: 100, tone: "light" },
   { x: 50, y: 100, size: 100, tone: "dark", transform: "rotate-180" },
-  // Body — mirrored pairs
   { x: 0, y: 200, size: 100, tone: "light" },
   { x: 100, y: 200, size: 100, tone: "light", transform: "-scale-x-100" },
   { x: 0, y: 300, size: 100, tone: "dark", transform: "rotate-180" },
   { x: 100, y: 300, size: 100, tone: "dark", transform: "-scale-x-100 rotate-180" },
-  // Symmetric, flat-bottomed base for support
   { x: 0, y: 400, size: 100, tone: "light" },
   { x: 100, y: 400, size: 100, tone: "light", transform: "-scale-x-100" },
+];
+
+const flower = (
+  cx: number,
+  cy: number,
+  r: number,
+  petal: Tone,
+  centre: Tone
+): Petal[] => [
+  { x: cx - r, y: cy - 2 * r, size: r, tone: petal },
+  { x: cx, y: cy - 2 * r, size: r, tone: petal, transform: "rotate-90" },
+  { x: cx + r, y: cy - r, size: r, tone: petal, transform: "rotate-90" },
+  { x: cx + r, y: cy, size: r, tone: petal, transform: "rotate-180" },
+  { x: cx - r, y: cy + r, size: r, tone: petal, transform: "-rotate-90" },
+  { x: cx, y: cy + r, size: r, tone: petal, transform: "rotate-180" },
+  { x: cx - 2 * r, y: cy - r, size: r, tone: petal },
+  { x: cx - 2 * r, y: cy, size: r, tone: petal, transform: "-rotate-90" },
+  { x: cx - r, y: cy - r, size: r, tone: centre },
+  { x: cx, y: cy - r, size: r, tone: centre, transform: "rotate-90" },
+  { x: cx - r, y: cy, size: r, tone: centre, transform: "-rotate-90" },
+  { x: cx, y: cy, size: r, tone: centre, transform: "rotate-180" },
+];
+
+export const BLOOM_PETALS: readonly Petal[] = [
+  ...flower(300, 250, 100, "light", "dark"),
+  ...flower(170, 640, 60, "dark", "light"),
+  ...flower(440, 720, 42, "light", "dark"),
+
+  { x: 400, y: 460, size: 80, tone: "dark" },
+  { x: 400, y: 540, size: 80, tone: "dark", transform: "-rotate-90" },
 ];
 
 export default function QuadrantCluster({
@@ -72,9 +92,6 @@ export default function QuadrantCluster({
     <div aria-hidden className={`pointer-events-none select-none ${className}`}>
       <div className="relative w-full" style={{ aspectRatio: `${gridW} / ${gridH}` }}>
         {petals.map((p, i) => (
-          // Square bounding box with a dashed blue outline, like a selection
-          // frame. The gradient quadrant fills it; only the quadrant is
-          // transformed so the square frame stays axis-aligned.
           <div
             key={i}
             className="absolute border border-dashed border-[#0093d4]/70"
