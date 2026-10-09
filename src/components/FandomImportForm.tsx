@@ -3,9 +3,11 @@
 import { ArrowRight, CircleAlert } from "lucide-react";
 import { FormEvent, useId, useRef, useState } from "react";
 
-// Special:FandomImport reads `wiki` (the fandom.com subdomain) and an optional
-// `lang` (the language path, e.g. "es" for starwars.fandom.com/es/). Without
-// JavaScript the form still submits, with `wiki` set to whatever was typed.
+// Special:FandomImport takes the wiki as a subpage named after the fandom.com
+// subdomain plus "wiki" (Special:FandomImport/starwarswiki imports
+// starwars.fandom.com), and an optional `lang` for the language path, e.g.
+// "es" for starwars.fandom.com/es/. Without JavaScript the form still submits,
+// with `wiki` set to whatever was typed.
 export const FANDOM_IMPORT_URL =
   "https://meta.wikioasis.org/wiki/Special:FandomImport";
 
@@ -40,8 +42,7 @@ export function fandomImportHref(input: string) {
   const parsed = parseFandomWiki(input);
   if (!parsed) return null;
 
-  const url = new URL(FANDOM_IMPORT_URL);
-  url.searchParams.set("wiki", parsed.wiki);
+  const url = new URL(`${FANDOM_IMPORT_URL}/${parsed.wiki}wiki`);
   if (parsed.lang) url.searchParams.set("lang", parsed.lang);
   return url.toString();
 }
