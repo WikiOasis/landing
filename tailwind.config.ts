@@ -18,6 +18,9 @@ export default {
         button: "var(--button)",
         "button-text": "var(--button-text)",
         line: "var(--line)",
+        panel: "var(--panel)",
+        surface: "var(--surface)",
+        warn: "var(--warn)",
       },
       fontFamily: {
         sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],

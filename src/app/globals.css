@@ -12,6 +12,9 @@
     --button: #0093d4; /* Buttons */
     --button-text: #e3e7eb; /* Text on Buttons */
     --line: rgba(28, 42, 54, 0.2); /* hairline from Body Text Colour */
+    --panel: #0a5ea8; /* Campaign panels, same in both modes */
+    --surface: #f4f7fa; /* Raised cards */
+    --warn: #c2362b; /* Warning icons */
     --radius: 12px;
   }
 
@@ -24,6 +27,8 @@
     --button: #0a5ea8; /* Buttons */
     --button-text: #e3e7eb; /* Text on Buttons */
     --line: rgba(227, 231, 235, 0.18); /* hairline from Body Text Colour @ 0.5px */
+    --surface: #243545; /* Raised cards */
+    --warn: #ff8f80; /* Warning icons */
   }
 
   * {
